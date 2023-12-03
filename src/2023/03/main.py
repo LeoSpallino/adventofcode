@@ -1,22 +1,7 @@
 import re
 
 
-def checkIfSymbolNear(num: tuple, symbols) -> bool:
-    line, span = num
-    start, stop = span
-
-    if (line, stop) in symbols:
-        return True
-    if (line, start - 1) in symbols:
-        return True
-    for i in range(start - 1, stop + 1):
-        if (line - 1, i) in symbols or (line + 1, i) in symbols:
-            return True
-
-    return False
-
-
-def getSymbolCoord(num: tuple, symbols) -> tuple:
+def getSymbolCoordNearNum(num: tuple, symbols) -> tuple:
     line, span = num
     start, stop = span
 
@@ -47,13 +32,14 @@ def part1(data: list[str]):
             nums.add((ind, (num.start(), num.end())))
 
     for num in nums:
-        if checkIfSymbolNear(num, symbols):
+        symbolCoord = getSymbolCoordNearNum(num, symbols)
+        if symbolCoord != (-1, -1):
             total += int(data[num[0]][num[1][0] : num[1][1]])
     return total
 
 
 def part2(data):
-    gearRatioTotal = 0
+    totalGearRatio = 0
     symbols = set()
     nums = set()
     partsTouchingSymbolsLookup = {}
@@ -67,8 +53,8 @@ def part2(data):
             nums.add((ind, (num.start(), num.end())))
 
     for num in nums:
-        if checkIfSymbolNear(num, symbols):
-            symbolCoord = getSymbolCoord(num, symbols)
+        symbolCoord = getSymbolCoordNearNum(num, symbols)
+        if symbolCoord != (-1, -1):
             if symbolCoord not in partsTouchingSymbolsLookup:
                 partsTouchingSymbolsLookup[symbolCoord] = []
             partsTouchingSymbolsLookup[symbolCoord].append(
@@ -81,8 +67,8 @@ def part2(data):
                 partsTouchingSymbolsLookup[gear][0]
                 * partsTouchingSymbolsLookup[gear][-1]
             )
-            gearRatioTotal += gearRatio
-    return gearRatioTotal
+            totalGearRatio += gearRatio
+    return totalGearRatio
 
 
 def solve(puzzleInput):
