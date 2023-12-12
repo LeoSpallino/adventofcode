@@ -1,18 +1,18 @@
 import re
 import itertools
 
-galaxy = open("testcase.in").read().splitlines()
+universe = open("testcase.in").read().splitlines()
 
 
-def expand(galaxy: list[str]):
+def expand(universe: list[str]):
     emptyRows = []
     emptyCols = []
 
-    for ind, row in enumerate(galaxy):
+    for ind, row in enumerate(universe):
         if len(re.findall(r"(#)", row)) == 0:
             emptyRows.append(ind)
 
-    cols = ["".join(col) for col in zip(*[list(row) for row in galaxy])]
+    cols = ["".join(col) for col in zip(*[list(row) for row in universe])]
 
     for ind, col in enumerate(cols):
         if len(re.findall(r"(#)", col)) == 0:
@@ -28,27 +28,27 @@ def manhattanDistance(p1, p2):
     return abs(p1x - p2x) + abs(p1y - p2y)
 
 
-def getExpandedUniverses(galaxy, emptyRows, emptyCols, expansionFactor):
-    universes = set()
+def getExpandedGalaxies(universe, emptyRows, emptyCols, expansionFactor):
+    galaxies = set()
 
-    for r in range(len(galaxy)):
-        for c in range(len(galaxy[0])):
-            if galaxy[r][c] == "#":
+    for r in range(len(universe)):
+        for c in range(len(universe[0])):
+            if universe[r][c] == "#":
                 numRows = len(list(filter(lambda i: i <= r, emptyRows)))
                 numCols = len(list(filter(lambda i: i <= c, emptyCols)))
                 coord = (
                     r + numRows * (expansionFactor - 1),
                     c + numCols * (expansionFactor - 1),
                 )
-                universes.add(coord)
+                galaxies.add(coord)
 
-    return universes
+    return galaxies
 
 
-def calcTotalLengths(galaxy, expansionFactor):
+def calcTotalLengths(universe, expansionFactor):
     total = 0
-    emptyRows, emptyCols = expand(galaxy)
-    universes = getExpandedUniverses(galaxy, emptyRows, emptyCols, expansionFactor)
+    emptyRows, emptyCols = expand(universe)
+    universes = getExpandedGalaxies(universe, emptyRows, emptyCols, expansionFactor)
 
     combinations = list(itertools.combinations(universes, 2))
 
@@ -58,5 +58,5 @@ def calcTotalLengths(galaxy, expansionFactor):
     return total
 
 
-print("Part 1:", calcTotalLengths(galaxy, 2))
-print("Part 2:", calcTotalLengths(galaxy, 1000000))
+print("Part 1:", calcTotalLengths(universe, 2))
+print("Part 2:", calcTotalLengths(universe, 1000000))
